@@ -68,9 +68,9 @@ class WebviewManager {
                     Uri[] results = null;
                     if (resultCode == Activity.RESULT_OK) {
                         if (fileUri != null && getFileSize(fileUri) > 0) {
-                            results = new Uri[] { fileUri };
+                            results = new Uri[]{fileUri};
                         } else if (videoUri != null && getFileSize(videoUri) > 0) {
-                            results = new Uri[] { videoUri };
+                            results = new Uri[]{videoUri};
                         } else if (intent != null) {
                             results = getSelectedFiles(intent);
                         }
@@ -103,7 +103,7 @@ class WebviewManager {
         if (data.getData() != null) {
             String dataString = data.getDataString();
             if (dataString != null) {
-                return new Uri[] { Uri.parse(dataString) };
+                return new Uri[]{Uri.parse(dataString)};
             }
         }
         // we have multiple files selected
@@ -222,18 +222,23 @@ class WebviewManager {
                 List<Intent> intentList = new ArrayList<Intent>();
                 fileUri = null;
                 videoUri = null;
+
+                /*
                 if (acceptsImages(acceptTypes)) {
                     Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     fileUri = getOutputFilename(MediaStore.ACTION_IMAGE_CAPTURE);
                     takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                     intentList.add(takePhotoIntent);
                 }
+                */
+
                 if (acceptsVideo(acceptTypes)) {
                     Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     videoUri = getOutputFilename(MediaStore.ACTION_VIDEO_CAPTURE);
                     takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
                     intentList.add(takeVideoIntent);
                 }
+
                 Intent contentSelectionIntent;
                 if (Build.VERSION.SDK_INT >= 21) {
                     final boolean allowMultiple = fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE;
@@ -244,14 +249,17 @@ class WebviewManager {
                     contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
                     contentSelectionIntent.setType("*/*");
                 }
+
                 Intent[] intentArray = intentList.toArray(new Intent[intentList.size()]);
 
                 Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
                 chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+
                 activity.startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
                 return true;
             }
+
 
             @Override
             public void onProgressChanged(WebView view, int progress) {
